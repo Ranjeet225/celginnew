@@ -82,6 +82,17 @@
                           <div class="col-lg-6">
                             <input type="text" class="input-field" placeholder="{{ __('Write Your Site Title Here') }}" name="referral_charge" value="{{ $gs->referral_charge }}" required="">
                           </div>
+                          
+                        </div>
+                        <div class="row justify-content-center">
+                          <div class="col-lg-3">
+                            <div class="left-area">
+                                <h4 class="heading">{{ __('Referral Bonus') }}</h4>
+                            </div>
+                          </div>
+                          <div class="col-lg-6">
+                            <input type="number" class="input-field" placeholder="{{ __('4%') }}" name="referral_bonus" value="{{ $gs->referral_bonus }}" required="">
+                          </div>
                         </div>
 
                         <!-- <div class="row justify-content-center">

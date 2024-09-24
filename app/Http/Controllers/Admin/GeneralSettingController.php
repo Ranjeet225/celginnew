@@ -128,7 +128,6 @@ class GeneralSettingController extends AdminBaseController
                 $data->upload($name,$file,$data->favicon);
                 $input['deal_background'] = $name;
             }
-
             if ($file = $request->file('breadcrumb_banner'))
             {
                 $name = \PriceHelper::ImageCreateName($file);
@@ -197,6 +196,13 @@ class GeneralSettingController extends AdminBaseController
             }
             else {
                 $input['product_page'] = null;
+            }
+            if (!empty($request->referral_bonus))
+            {
+               $input['referral_bonus'] = $request->referral_bonus;
+            }
+            else {
+                $input['referral_bonus'] = null;
             }
 
 

@@ -357,7 +357,8 @@ input[type="checkbox"] + label {
 .checkout-area .content-box .content .ship-diff-addres-area {
 	margin-top: 20px;
 }
-.mybtn1 {
+.mybtn1
+ {
 	font-size: 16px;
 	font-weight: 400;
 	padding: 8px 18px;
@@ -371,7 +372,23 @@ input[type="checkbox"] + label {
 	-webkit-transition: all 0.3s ease-in;
 	transition: all 0.3s ease-in;
 }
+.mybtn2 {
+	font-size: 16px;
+	font-weight: 400;
+	padding: 8px 18px;
+	display: inline-block;
+	color: #fff;
+	border: 0px;
+	cursor: pointer;
+	border-radius: 3px;
+	-webkit-transition: all 0.3s ease-in;
+	transition: all 0.3s ease-in;
+}
 .mybtn1:hover {
+	background: #fff;
+	color: #c9030f;
+}
+.mybtn2:hover {
 	background: #fff;
 	color: #c9030f;
 }
@@ -613,10 +630,15 @@ button:not(:disabled) {
 	cursor: pointer;
 }
 @media (max-width: 1649px) {
-	.mybtn1 {
+	.mybtn1,
+	.mybtn2 {
 		padding: 8px 12px;
 		margin-bottom: 10px;
 	}
+}
+.mybtn2{
+    color: #fff;
+    background:#bb8a8a!important;
 }
 .checkout-area .content-box .content .order-area .order-item {
 	display: -webkit-box;

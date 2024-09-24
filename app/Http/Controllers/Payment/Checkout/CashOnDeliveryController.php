@@ -27,8 +27,6 @@ class CashOnDeliveryController extends CheckoutBaseControlller
     {
         $input = $request->all();
 
-        //   dd($input);
-
         if ($request->pass_check) {
             $auth = OrderHelper::auth_check($input); // For Authentication Checking
             if (!$auth['auth_success']) {
@@ -47,6 +45,7 @@ class CashOnDeliveryController extends CheckoutBaseControlller
         $t_oldCart = Session::get('cart');
            $t_cart = Cart::restoreCart($t_oldCart);
         // $t_cart = new Cart($t_oldCart);
+        
         $new_cart = [];
         $new_cart['totalQty'] = $t_cart->totalQty;
         $new_cart['totalPrice'] = $t_cart->totalPrice;
@@ -121,7 +120,6 @@ class CashOnDeliveryController extends CheckoutBaseControlller
         $order = new Order;
        
 
-        // die('k');
         $success_url = route('front.payment.return');
         $input['user_id'] = Auth::check() ? Auth::user()->id : NULL;
         $input['cart'] = $new_cart;
@@ -129,15 +127,21 @@ class CashOnDeliveryController extends CheckoutBaseControlller
         $input['pay_amount'] = $orderTotal ;
         $input['order_number'] = Str::random(4) . time();
         $input['wallet_price'] = $request->wallet_price / $this->curr->value;
-        if ($input['tax_type'] == 'state_tax') {
-            $input['tax_location'] = State::findOrFail($input['tax'])->state;
-        } else {
-            $input['tax_location'] = Country::findOrFail($input['tax'])->country_name;
+        $tax = 0;
+        foreach($cart->items as $data){
+            $tax += isset($data['price']) && isset($data['item']['product_tax']) ? $data['price'] * $data['item']['product_tax'] / 100 : 0;
         }
-        $input['tax'] = Session::get('current_tax');
+        $input['tax'] = $tax;
+        // if ($input['tax_type'] == 'state_tax') {
+        //     $input['tax_location'] = State::findOrFail($input['tax'])->state;
+        // } else {
+        //     dd($input);
+        //     $input['tax_location'] = Country::findOrFail($input['tax'])->country_name;
+        // }
+        // $input['tax'] = Session::get('current_tax');
 
         if (Session::has('refferel_user_id')) {
-            $val = $request->total / $this->curr->value;
+            $val =  preg_replace('/\D/', '',$request->total) / $this->curr->value;
             $val = $val / 100;
             $sub = $val * $this->gs->affilate_charge;
             if ($temp_affilate_users != null) {
@@ -182,6 +186,7 @@ class CashOnDeliveryController extends CheckoutBaseControlller
         if ($input['coupon_id'] != "") {
             OrderHelper::coupon_check($input['coupon_id']); // For Coupon Checking
         }
+        
 
         if (Auth::check()) {
             if ($this->gs->is_reward == 1) {
@@ -244,7 +249,6 @@ class CashOnDeliveryController extends CheckoutBaseControlller
         $mailer = new GeniusMailer();
 
         $mailer->sendCustomMail($data);
-
         return redirect($success_url);
     }
 }

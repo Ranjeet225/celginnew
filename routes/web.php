@@ -585,7 +585,7 @@ Route::prefix('admin')->group(function () {
 
     //------------ ADMIN GENERAL SETTINGS SECTION ------------
 
-    Route::group(['middleware' => 'permissions:general_settings'], function () {
+Route::group(['middleware' => 'permissions:general_settings'], function () {
 
         Route::get('/general-settings/logo', 'Admin\GeneralSettingController@logo')->name('admin-gs-logo');
         Route::get('/general-settings/favicon', 'Admin\GeneralSettingController@favicon')->name('admin-gs-fav');
@@ -598,7 +598,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/general-settings/maintenance', 'Admin\GeneralSettingController@maintain')->name('admin-gs-maintenance');
 
 
- Route::get('/general-settings/referral', 'Admin\GeneralSettingController@referral')->name('admin-gs-referral');
+    Route::get('/general-settings/referral', 'Admin\GeneralSettingController@referral')->name('admin-gs-referral');
       
         // Deal Of The Day
 

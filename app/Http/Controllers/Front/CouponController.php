@@ -134,6 +134,7 @@ class CouponController extends FrontBaseController
         }
     }
 
+
     public function couponcheck()
     {
         $code = $_GET['code'];
@@ -144,11 +145,10 @@ class CouponController extends FrontBaseController
             Session::forget('coupon_code');
             Session::forget('coupon_id');
             Session::forget('coupon_total1');
-            $total = (float)preg_replace('/\D/', '', $_GET['total']) + (float)($_GET['shipping_cost']);
+            $total = preg_replace('/[^0-9.]/', '', $_GET['total']) + (float)($_GET['coupon_discount']);
             return response()->json(['total'=>"₹" .$total, 'remove_coupen' => true]);
         }    
      
-
         if (!$coupon) {
             return response()->json(0);
         }
@@ -157,7 +157,6 @@ class CouponController extends FrontBaseController
         $discount_items = [];
         foreach ($cart->items as $key => $item) {
             $product = Product::findOrFail($item['item']['id']);
-
             if ($coupon->coupon_type == 'category') {
                 if ($product->category_id == $coupon->category) {
                     $discount_items[] = $key;
@@ -167,13 +166,11 @@ class CouponController extends FrontBaseController
                     $discount_items[] = $key;
                 }
             } elseif ($coupon->coupon_type == 'child_category') {
-
                 if ($product->child_category == $coupon->child_category) {
                     $discount_items[] = $key;
                 }
             }
         }
-
 
         if (count($discount_items) == 0) {
             return 0;
@@ -189,12 +186,11 @@ class CouponController extends FrontBaseController
 
 
         $total = (float)preg_replace('/[^0-9\.]/ui', '', $main_discount_price);
-
         $fnd = Coupon::where('code', '=', $code)->get()->count();
-        if (Session::has('is_tax')) {
-            $xtotal = ($total * Session::get('is_tax')) / 100;
-            $total = $total + $xtotal;
-        }
+        // if (Session::has('is_tax')) {
+        //     $xtotal = ($total * Session::get('is_tax')) / 100;
+        //     $total = $total + $xtotal;
+        // }
         if ($fnd < 1) {
             return response()->json(0);
         } else {
@@ -215,11 +211,8 @@ class CouponController extends FrontBaseController
                     if ($val == $code) {
                         return response()->json([2,$val]);
                     }
-                    // $cart = new Cart($oldCart);
                     $cart = Cart::restoreCart($oldCart);
-
                     if ($coupon->type == 0) {
-
                         if ($coupon->price >= $total) {
                             return response()->json(3);
                         }
@@ -229,16 +222,13 @@ class CouponController extends FrontBaseController
                         $oldCart = Session::get('cart');
                         // $cart = new Cart($oldCart);
                         $cart = Cart::restoreCart($oldCart);
-                        $total = $total - $_GET['shipping_cost'];
-
                         $val = $total / 100;
                         $sub = $val * $coupon->price;
                         $total = $total - $sub;
-                        $total = $total + $_GET['shipping_cost'];
+                        $total = $total + (isset($_GET['shipping_cost']) ? (float)$_GET['shipping_cost'] : 0);  
                         $data[0] = \PriceHelper::showCurrencyPrice($total);
                         $data[1] = $code;
                         $data[2] = round($sub, 2);
-
                         Session::put('coupon', $data[2]);
                         Session::put('coupon_code', $code);
                         Session::put('coupon_id', $coupon->id);
@@ -252,7 +242,6 @@ class CouponController extends FrontBaseController
                         Session::put('coupon_percentage', $data[4]);
                         return response()->json($data);
                     } else {
-
                         if ($coupon->price >= $total) {
                             return response()->json(3);
                         }

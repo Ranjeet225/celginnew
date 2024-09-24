@@ -141,7 +141,6 @@
                                                             @endif
 
                                                             @endif
-
                                                             <p>{{ __('Tax :') }}
                                                                 {{ \PriceHelper::showOrderCurrencyPrice((($order->tax) /
                                                                 $order->currency_value),$order->currency_sign) }}

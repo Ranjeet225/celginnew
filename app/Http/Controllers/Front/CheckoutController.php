@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Front;
 use App\{
     Models\Cart,
     Models\Order,
-    Models\PaymentGateway
+    Models\PaymentGateway,
+    Models\User,
+
 };
 use App\Models\City;
 use App\Models\State;
@@ -98,8 +100,6 @@ class CheckoutController extends FrontBaseController
                 $shipping_data  = DB::table('shippings')->whereUserId(0)->get();
             }
 
-
-
             // Packaging
 
             if ($this->gs->multiple_shipping == 1) {
@@ -125,28 +125,28 @@ class CheckoutController extends FrontBaseController
                 $total = Session::get('coupon_total');
                 $total =  str_replace(',', '', str_replace($curr->sign, '', $total));
             }
-            return view('frontend.checkout', ['products' => $cart->items, 'totalPrice' => $total, 'pickups' => $pickups, 'totalQty' => $cart->totalQty, 'gateways' => $gateways, 'shipping_cost' => 0, 'digital' => $dp, 'curr' => $curr, 'shipping_data' => $shipping_data, 'package_data' => $package_data, 'vendor_shipping_id' => $vendor_shipping_id, 'vendor_packing_id' => $vendor_packing_id, 'paystack' => $paystackData]);
+            $orderCount = Order::where('user_id', Auth::user()->id)->count();
+            // $orderCompleted = Order::where('user_id', Auth::user()->id)->where('status', 'completed')->count();
+            if ($orderCount == 0) {
+                $user = User::where('id', Auth::user()->id)->select('reffered_by')->first();
+                if ($user && $user->reffered_by) {
+                    $refferal_discount = $total * ($this->gs->referral_bonus / 100);
+                    $total = $total - ($total * ($this->gs->referral_bonus / 100));
+                }
+            }else{
+                $refferal_discount = 0;
+            }
+            return view('frontend.checkout', ['products' => $cart->items, 'refferal_discount'=>$refferal_discount,'totalPrice' => $total, 'pickups' => $pickups, 'totalQty' => $cart->totalQty, 'gateways' => $gateways, 'shipping_cost' => 0, 'digital' => $dp, 'curr' => $curr, 'shipping_data' => $shipping_data, 'package_data' => $package_data, 'vendor_shipping_id' => $vendor_shipping_id, 'vendor_packing_id' => $vendor_packing_id, 'paystack' => $paystackData]);
         } else {
-
-           
-
             if ($this->gs->guest_checkout == 1) {
                 if ($this->gs->multiple_shipping == 1) {
                     $ship_data = Order::getShipData($cart);
                     $shipping_data = $ship_data['shipping_data'];
-
-                    
                     $vendor_shipping_id = $ship_data['vendor_shipping_id'];
                 } else {
-                  
                     $shipping_data  = DB::table('shippings')->where('user_id', '=', 0)->get();
-            
-                   
-            
                 }
-
                 // Packaging
-                
                 if ($this->gs->multiple_shipping == 1) {
                     $pack_data = Order::getPackingData($cart);
                     $package_data = $pack_data['package_data'];
@@ -309,3 +309,7 @@ class CheckoutController extends FrontBaseController
         return view('frontend.success', compact('tempcart', 'order'));
     }
 }
+
+
+
+

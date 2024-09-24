@@ -294,10 +294,15 @@
                                 <div class="navbar-slide-push transation-this">
                                     <div
                                         class="login-signup bg-secondary d-flex justify-content-between py-10 px-20 align-items-center">
-                                        <a href="{{route('user.login')}}" class="d-flex align-items-center text-white">
+                                        {{-- <a href="{{route('user.login')}}" class="d-flex align-items-center text-white">
                                             <i class="flaticon-user flat-small me-1"></i>
                                             <span>Login/Signup</span>
-                                        </a>
+                                        </a> --}}
+                                        {{-- <a href="my-account.html"
+                                            class="has-dropdown d-flex align-items-center text-dark text-decoration-none"
+                                            title="My Account">
+                                            <i class="flaticon-user-3 flat-mini me-1 mx-auto" ></i>
+                                        </a> --}}
                                         <span class="slide-nav-close"><i
                                                 class="flaticon-cancel flat-mini text-white"></i></span>
                                     </div>

@@ -950,8 +950,6 @@ class FrontendController extends FrontBaseController
     {
         $client = new Client();
         $url = "https://track.delhivery.com/c/api/pin-codes/json/?filter_codes=" . $request->zipcode;
-       
-       
         try {
             $response = $client->request('GET', $url, [
                 'headers' => [
@@ -960,20 +958,16 @@ class FrontendController extends FrontBaseController
                 ],
                 'verify' => false,
             ]);
-
-
             $oldCart = Session::get('cart');
-
-            //  dd($oldCart);
             $data = json_decode($response->getBody(), true);
             if(!empty($data))
             {
-               
-               $result =  $this->delivery_cost($request->zipcode);
+                $result = [];
+                $result['shipping_cost'] =  number_format((float)$this->delivery_cost($request->zipcode), 2);
                if($result==0){
-                 return response()->json(['status'=>false, 'message'=>"Pincode Not Found"]);
-               } else {
-                 return response()->json(['status'=>true, 'result'=>$result]);
+                   return response()->json(['status'=>false, 'message'=>"Pincode Not Found"]);
+                } else {
+                 return response()->json(['status'=>true, 'result'=> $result]);
                }
             } else {
                 return response()->json(['status'=>false, 'message'=>"Pincode Not Found"]);

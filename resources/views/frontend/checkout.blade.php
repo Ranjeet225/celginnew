@@ -1,6 +1,69 @@
 @extends('layouts.front')
 @section('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.0/dist/sweetalert2.min.css">
+<style>
+   .checkout__coupon-section {
+      margin-top: 2rem;
+      position: relative;
+   }
+   .checkout__coupon-heading {
+      align-items: center;
+      background: #fff;
+      border: 1px solid var(--bs-primary);
+      border-radius: 5px;
+      color: var(--bs-primary);
+      display: flex;
+      font-size: 14px;
+      font-weight: 600;
+      gap: .25rem;
+      inset-inline-start: 1rem;
+      margin-bottom: 0;
+      padding: .25rem .5rem;
+      position: absolute;
+      top: -1rem;
+      z-index: 999;
+   }
+   .checkout__coupon-list {
+      border: 1px dashed var(--bs-primary);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      margin-bottom: 1rem;
+      max-height: 600px;
+      overflow-y: auto;
+      padding: 2rem .75rem .75rem;
+   }
+   .checkout__coupon-item {
+      border-radius: 8px;
+      box-shadow: 0 0 4px 0 hsla(0, 0%, 80%, .75);
+      cursor: pointer;
+      display: flex;
+      min-width: 16rem;
+      transition: all .2s;
+   }
+   .checkout__coupon-item-content {
+      flex: 2;
+      padding: .5rem 1rem;
+      position: relative;
+   }
+   .checkout__coupon-item-description {
+      color: #4d4d4d;
+      display: block;
+      font-size: 13px;
+      min-width: 135px;
+      transition: all .2s;
+   }
+   .checkout__coupon-item-code {
+      align-items: center;
+      background: #efefef;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      margin-top: .5rem;
+      padding: .5rem;
+   }
+</style>
 @endsection
 @section('content')
 @include('partials.global.common-header')
@@ -165,10 +228,20 @@
 
                                     <div class="col-lg-6 d-none select_state">
                                        <select class="form-control " id="show_state" name="customer_state" required>
-
                                        </select>
                                     </div>
-
+                                    @if(Session::has('coupon_total'))
+                                    <input type="hidden" name="total" id="grandtotal" value="{{round($totalPrice * $curr->value,2)}}">
+                                    <input type="hidden" class="tgrandtotal" value="{{ $totalPrice }}">
+                                    @elseif(Session::has('coupon_total1'))
+                                    <input type="hidden" name="total" id="grandtotal" value="{{ preg_replace(" /[^0-9,.]/", "" ,
+                                       Session::get('coupon_total1') ) }}">
+                                    <input type="hidden" class="tgrandtotal" value="{{ preg_replace(" /[^0-9,.]/", "" ,
+                                       Session::get('coupon_total1') ) }}">
+                                    @else
+                                    <input type="hidden" name="total" id="grandtotal" value="{{round($totalPrice * $curr->value,2)}}">
+                                    <input type="hidden" class="tgrandtotal" value="{{round($totalPrice * $curr->value,2)}}">
+                                    @endif
                                     <div class="col-lg-6 d-none my-2">
                                        <select class="form-control " id="show_city" name="customer_city" required>
 
@@ -359,8 +432,8 @@
                               <div class="row">
                                  <div class="col-lg-12 mt-3">
                                     <div class="bottom-area">
-                                       <a href="javascript:;" id="step1-btn" class="mybtn1 mr-3">{{ __('Back') }}</a>
-                                       <a href="javascript:;" id="step3-btn" class="mybtn1">{{ __('Continue') }}</a>
+                                       <a href="javascript:;" id="step1-btn" class="mybtn11 mr-3  btn btn-secondary">{{ __('Back') }}</a>
+                                       <a href="javascript:;" id="step3-btn" class="mybtn11 btn btn-secondary">{{ __('Continue') }}</a>
                                     </div>
                                  </div>
                               </div>
@@ -524,20 +597,20 @@
                @endphp
                @if(Session::has('coupon_total'))
                <input type="hidden" name="total" id="grandtotal" value="{{round($totalPrice * $curr->value,2)}}">
-               <input type="hidden" id="tgrandtotal" value="{{ $totalPrice }}">
+               <input type="hidden" class="tgrandtotal" value="{{ $totalPrice }}">
                @elseif(Session::has('coupon_total1'))
                <input type="hidden" name="total" id="grandtotal" value="{{ preg_replace(" /[^0-9,.]/", "" ,
                   Session::get('coupon_total1') ) }}">
-               <input type="hidden" id="tgrandtotal" value="{{ preg_replace(" /[^0-9,.]/", "" ,
+               <input type="hidden" class="tgrandtotal" value="{{ preg_replace(" /[^0-9,.]/", "" ,
                   Session::get('coupon_total1') ) }}">
                @else
                <input type="hidden" name="total" id="grandtotal" value="{{round($totalPrice * $curr->value,2)}}">
-               <input type="hidden" id="tgrandtotal" value="{{round($totalPrice * $curr->value,2)}}">
+               <input type="hidden" class="tgrandtotal" value="{{round($totalPrice * $curr->value,2)}}">
                @endif
                <input type="hidden" id="original_tax" value="0">
                <input type="hidden" id="wallet-price" name="wallet_price" value="0">
                <input type="hidden" id="ttotal"
-                  value="{{ Session::has('cart') ? App\Models\Product::convertPrice(Session::get('cart')->totalPrice) : '0' }}">
+                  value="{{ Session::has('cart') ? App\Models\Product::convertPrice($totalPrice) : '0' }}">
                <input type="hidden" name="coupon_code" id="coupon_code"
                   value="{{ Session::has('coupon_code') ? Session::get('coupon_code') : '' }}">
                <input type="hidden" name="coupon_discount" id="coupon_discount"
@@ -563,7 +636,10 @@
                               App\Models\Product::convertPrice(Session::get('cart')->totalPrice) : '0.00' }}</b>
                         </P>
                      </li>
-                     <li class="tax_show  d-none">
+                     {{-- @if(array_sum(array_map(function($data) {
+                        return isset($data['price']) && isset($data['item']['product_tax']) ? $data['price'] * $data['item']['product_tax'] / 100 : 0;
+                     }, $products)) > 0)
+                     <li class="tax_show">
                         <p>
                            {{ __('Tax Amount') }}
                         </p>
@@ -573,13 +649,29 @@
                            }, $products)))}}
                         </P>
                      </li>
-
+                     @endif --}}
+                     @php
+                        $orderCount = App\Models\Order::where('user_id', Auth::user()->id)->count();
+                     @endphp
+                     @if($orderCount == 0)
+                        @php
+                           $user = App\Models\User::where('id', Auth::user()->id)->select('reffered_by')->first();
+                        @endphp
+                        @if($user && $user->reffered_by)
+                        <li>
+                           <p>
+                              {{ __('Refferel Discount') }}
+                           </p>
+                           <p class="float-end">- {{App\Models\Product::convertPrice($refferal_discount)}}</p>
+                        </li>
+                     @endif
+                    @endif
                      <li class="">
                         <p>
                            {{ __('Shipping Cost')}}
                         </p>
                         <P>
-                           <b> <span class="shipping_cost_view">{{App\Models\Product::convertPrice(0)}}</span> </b>
+                           <b> <span class="shipping_cost">{{App\Models\Product::convertPrice(0)}}</span> </b>
                         </P>
                      </li>
 
@@ -632,6 +724,7 @@
                         <input type="text"  id="coupon_code_show" required=""
                            autocomplete="off">
                         <input type="text"  id="coupon_value" style="display: none" value="coupon">
+
                         <button  id="remove_coupon" >
                                {{ __('Remove') }}
                         </button>
@@ -682,26 +775,55 @@
                   @endif
                   @endif
 
-
-
                   <div class="final-price">
                      <span>{{ __('Final Price') }} :</span>
                      @if(Session::has('coupon_total'))
-                     @if($gs->currency_format == 0)
-                   
-                     <span id="final-cost">{{ $curr->sign }}{{ $totalPrice }}</span>
-                     @else
-                    
-                     <span id="final-cost">{{ $totalPrice }}{{ $curr->sign }}</span>
-                     @endif
+                        @if($gs->currency_format == 0)
+                           <span id="final-cost">{{ $curr->sign }}{{ $totalPrice }}</span>
+                        @else
+                           <span id="final-cost">{{ $totalPrice }}{{ $curr->sign }}</span>
+                        @endif
                      @elseif(Session::has('coupon_total1'))
-                     <span id="final-cost"> {{ Session::get('coupon_total1') }}</span>
+                           <span id="final-cost"> {{ Session::get('coupon_total1') }}</span>
                      @else
-                     <span id="final-cost">{{ App\Models\Product::convertPrice($totalPrice) }}</span>
+                           <span id="final-cost">{{ App\Models\Product::convertPrice($totalPrice) }}</span>
                      @endif
-
                   </div>
-                  {{-- Final Price Area End --}}
+                     @php
+                        $coupon_use =App\Models\Order::where('user_id',Auth::user()->id)->whereNotNull('coupon_code')->count();
+                        $coupon = App\Models\Coupon::where('status', 1)->select('id', 'code', 'price')->get();
+                     @endphp
+                     @if($coupon_use == 0)
+                        @if(count($coupon) > 0)
+                        <div class="checkout__coupon-section">
+                           <div class="checkout__coupon-heading">
+                              <img width="32" height="32" src="{{ asset('assets/images/coupon-code.gif') }}" alt="coupon code icon">
+                              Coupon codes ({{ count($coupon) }})
+                           </div>
+                           <div class="checkout__coupon-list">
+                              @foreach ($coupon as $item)
+                                    <div class="checkout__coupon-item">
+                                       <div class="checkout__coupon-item-icon"></div>
+                                       <div class="checkout__coupon-item-content">
+                                          <div class="checkout__coupon-item-title">
+                                                <h4>{{ $item->price }} %</h4>
+                                          </div>
+                                          <div class="checkout__coupon-item-description">
+                                                Discount {{ $item->price }} % limited to use coupon code per customer. This coupon can only be used once per customer!
+                                          </div>
+                                          <div class="checkout__coupon-item-code">
+                                                <span id="coupon-code-{{ $item->id }}">{{ $item->code }}</span>
+                                                <button type="button" onclick="copyCouponCode('{{ $item->code }}')">
+                                                   {{ __('Copy') }}
+                                                </button>
+                                          </div>
+                                       </div>
+                                    </div>
+                              @endforeach
+                           </div>
+                        </div>
+                        @endif
+                     @endif
                   @endif
                </div>
             </div>
@@ -876,6 +998,15 @@
 <script src="https://www.2checkout.com/checkout/api/2co.min.js"></script>
 <script src="https://js.stripe.com/v3/"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.0/dist/sweetalert2.all.min.js"></script>
+<script>
+   function copyCouponCode(code) {
+       navigator.clipboard.writeText(code).then(() => {
+           alert("Coupon code copied: " + code);
+       }).catch(err => {
+           console.error('Error copying text: ', err);
+       });
+   }
+</script>
 <script type="text/javascript">
    $('a.payment:first').addClass('active');
 
@@ -931,21 +1062,21 @@
    				$('.select_state').removeClass('d-none');
    				$.get(state_url,function(response){
    					$('#show_state').html(response.data);
-   					if(is_user==1){
-   						tax_submit(country_id,response.state);
-   					}else{
-   						tax_submit(country_id,state_id);
-   					}
+   					// if(is_user==1){
+   					// 	tax_submit(country_id,response.state);
+   					// }else{
+   					// 	tax_submit(country_id,state_id);
+   					// }
 
    				});
 
    			}else{
-   				tax_submit(country_id,state_id);
+   				// tax_submit(country_id,state_id);
    				hide_state();
    			}
 
    		}else{
-   			tax_submit(country_id,state_id);
+   			// tax_submit(country_id,state_id);
    			hide_state();
    		}
 
@@ -955,7 +1086,7 @@
    	$(document).on('change','#show_state',function(){
    		let state_id = $(this).val();
    		let country_id = $('#select_country option:selected').attr('data');
-   		tax_submit(country_id,state_id);
+   		// tax_submit(country_id,state_id);
          $.get("{{route('state.wise.city')}}",{state_id:state_id},function(data){
             $('#show_city').parent().removeClass('d-none');
             $('#show_city').html(data.data);
@@ -984,57 +1115,57 @@
             $('.select_state').removeClass('d-none');
             $.get(state_url,function(response){
                $('#show_state').html(response.data);
-               tax_submit(country_id,response.state);
+               // tax_submit(country_id,response.state);
             });
 
          }else{
-            tax_submit(country_id,state_id);
+            // tax_submit(country_id,state_id);
             hide_state();
          }
       }else{
-         tax_submit(country_id,state_id);
+         // tax_submit(country_id,state_id);
          hide_state();
       }
    });
 
 
-   function tax_submit(country_id,state_id){
+   // function tax_submit(country_id,state_id){
      
-      $('.gocover').show();
-      var total = $("#ttotal").val();
-      var ship = 0;
-      $.ajax({
-            type: "GET",
-            url:mainurl+"/country/tax/check",
+   //    $('.gocover').show();
+   //    var total = $("#ttotal").val();
+   //    var ship = 0;
+   //    $.ajax({
+   //          type: "GET",
+   //          url:mainurl+"/country/tax/check",
             
-            data:{state_id:state_id,country_id:country_id,total:total,shipping_cost:ship},
-            success:function(data){
+   //          data:{state_id:state_id,country_id:country_id,total:total,shipping_cost:ship},
+   //          success:function(data){
                
-               $('#grandtotal').val(data[0]);
-               $('#tgrandtotal').val(data[0]);
-               $('#original_tax').val(data[1]);
-               $('.tax_show').removeClass('d-none');
-               $('#input_tax').val(data[11]);
-               $('#input_tax_type').val(data[12]);
-               $('.original_tax').html(parseFloat(data[1]).toFixed(2));
-                  var ttotal = parseFloat($('#grandtotal').val());
-                  var tttotal = parseFloat($('#grandtotal').val()) + (parseFloat(mship) + parseFloat(mpack));
-                  ttotal = parseFloat(ttotal).toFixed(2);
-                  tttotal = parseFloat(tttotal).toFixed(2);
-                  $('#grandtotal').val(data[0]+parseFloat(mship) + parseFloat(mpack));
-                  if(pos == 0){
-                     $('#final-cost').html('{{ $curr->sign }}'+tttotal);
-                     $('.total-cost-dum #total-cost').html('{{ $curr->sign }}'+ttotal);
-                  }
-                  else{
-                     $('#total-cost').html('');
-                     $('#final-cost').html(tttotal+'{{ $curr->sign }}');
-                     $('.total-cost-dum #total-cost').html(ttotal+'{{ $curr->sign }}');
-                  }
-                  $('.gocover').hide();
-            }
-      });
-   }
+   //             $('#grandtotal').val(data[0]);
+   //             $('#tgrandtotal').val(data[0]);
+   //             $('#original_tax').val(data[1]);
+   //             $('.tax_show').removeClass('d-none');
+   //             $('#input_tax').val(data[11]);
+   //             $('#input_tax_type').val(data[12]);
+   //             $('.original_tax').html(parseFloat(data[1]).toFixed(2));
+   //                var ttotal = parseFloat($('#grandtotal').val());
+   //                var tttotal = parseFloat($('#grandtotal').val()) + (parseFloat(mship) + parseFloat(mpack));
+   //                ttotal = parseFloat(ttotal).toFixed(2);
+   //                tttotal = parseFloat(tttotal).toFixed(2);
+   //                $('#grandtotal').val(data[0]+parseFloat(mship) + parseFloat(mpack));
+   //                if(pos == 0){
+   //                   $('#final-cost').html('{{ $curr->sign }}'+tttotal);
+   //                   $('.total-cost-dum #total-cost').html('{{ $curr->sign }}'+ttotal);
+   //                }
+   //                else{
+   //                   $('#total-cost').html('');
+   //                   $('#final-cost').html(tttotal+'{{ $curr->sign }}');
+   //                   $('.total-cost-dum #total-cost').html(ttotal+'{{ $curr->sign }}');
+   //                }
+   //                $('.gocover').hide();
+   //          }
+   //    });
+   // }
 
 
    $('#shipop').on('change',function(){
@@ -1062,7 +1193,8 @@
       let view = $(this).attr('view');
       let title = $(this).attr('data-form');
       $('#shipping_text'+ref).html(title +'+'+ view);
-      var ttotal = parseFloat($('#tgrandtotal').val()) + parseFloat(mship) + parseFloat(mpack);
+      var totalsss = $('.tgrandtotal').val();
+      var ttotal = parseFloat($('.tgrandtotal').val()) + parseFloat(mship) + parseFloat(mpack);
     
       ttotal = parseFloat(ttotal).toFixed(2);
     
@@ -1084,7 +1216,7 @@
       let view = $(this).attr('view');
       let title = $(this).attr('data-form');
       $('#packing_text'+ref).html(title +'+'+ view);
-      var ttotal = parseFloat($('#tgrandtotal').val()) + parseFloat(mship) + parseFloat(mpack);
+      var ttotal = parseFloat($('.tgrandtotal').val()) + parseFloat(mship) + parseFloat(mpack);
       ttotal = parseFloat(ttotal).toFixed(2);
       if(pos == 0){
    			$('#final-cost').html('{{ $curr->sign }}'+ttotal);
@@ -1098,12 +1230,13 @@
 
    $("#check-coupon-form").on('submit', function () {
       var val = $("#code").val();
-      var total = $("#ttotal").val();
-      var ship = 0;
+      var total = $("#grandtotal").val();
+      var shipping_cost = $('.shipping_cost_view').val();
+      ship_cost = parseFloat(shipping_cost.replace(/[₹,]/g, '').trim());
          $.ajax({
                   type: "GET",
                   url:mainurl+"/carts/coupon/check",
-                  data:{code:val, total:total, shipping_cost:ship},
+                  data:{code:val, total:total, shipping_cost:ship_cost},
                   success:function(data){
                      if(data == 0)
                      {
@@ -1132,7 +1265,7 @@
                      $('#discount').html(data[2]+'{{ $curr->sign }}');
                   }
                      $('#grandtotal').val(data[0]);
-                     $('#tgrandtotal').val(data[0]);
+                     $('.tgrandtotal').val(data[0]);
                      $('#coupon_code').val(data[1]);
                      $('#coupon_discount').val(data[2]);
                      if(data[4] != 0){
@@ -1166,19 +1299,21 @@
    });
    $(".applied_coupon_code").on('submit', function (e) {
         e.preventDefault();
-        var ship = 0;
         var coupon_code = $("#coupon_code_show").val();
-        var total = $("#ttotal").val();
+        var total = $("#grandtotal").val();
         var applied_coupon = $("#coupon_value").val();
-        ship =  $('.shipping_cost_view').val();
+        var coupon_discount = $("#coupon_discount").val();
+        var shipping_cost = $('.shipping_cost_view').val();
+         ship_cost = parseFloat(shipping_cost.replace(/[₹,]/g, '').trim());
         $.ajax({
             type: "GET", 
             url: mainurl + "/carts/coupon/check",
             data: {
                 code: coupon_code,
                 total: total,
-                shipping_cost: ship,
-                applied_coupon: applied_coupon
+                shipping_cost: ship_cost,
+                applied_coupon: applied_coupon,
+                coupon_discount: coupon_discount
             },
             success: function(data) {
                 if (data['remove_coupen']) {
@@ -1244,11 +1379,14 @@
    function getShipping(shippingcost){
       if(shippingcost){
       let curr = parseFloat(shippingcost);
-      var ttotal = parseFloat($('#tgrandtotal').val()) + curr + parseFloat(mpack);
-        ttotal = Math.round(ttotal * 100) / 100;
       $('.shipping_cost_view').html('{{ $curr->sign }}'+curr);
-      $('.shipping_cost_view').val(curr);
-      
+      $('.shipping_cost').html('{{ $curr->sign }}'+curr);
+      $('.shipping_cost_view').val(curr);   
+
+      var grandtotalString = $('.tgrandtotal').val();
+      var grandtotal = parseFloat(grandtotalString.replace(/[₹,]/g, '').trim());
+      var ttotal = grandtotal + curr + parseFloat(mpack);
+        ttotal = Math.round(ttotal * 100) / 100;
       $('#final-cost').html('{{ $curr->sign }}'+ttotal);
       
      } else {
@@ -1440,6 +1578,8 @@
 
       $(".mybtn1").click(function(){
          let zipcode = $("#zipcode").val();
+         var grandtotalString = $('.tgrandtotal').val();
+         // var grandtotal = parseFloat(grandtotalString.replace(/[₹,]/g, '').trim());
          if(zipcode==''){
             $("#pincodeerror").html('Please enter your zipcode');
             return false;
@@ -1448,7 +1588,7 @@
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                 url:mainurl+"/getPinCodeDetails",
                 type: 'post',
-                data: { zipcode: zipcode },
+                data: { zipcode: zipcode},
                 success: function(response)
                 {
                   if(response.status==false){
@@ -1458,10 +1598,7 @@
                      $("#pincodeerror").html(response.message);
                      return false;
                   } else {
-                     getShipping(response.result);
-                     console.log("this is tesssss==================>",response);
-                     console.log(response.result);
-
+                     getShipping(response.result.shipping_cost);
                   }
                     
                 }
@@ -1478,6 +1615,8 @@
             title: 'Please Wait!',
             html: 'We are checking your pincode',
             allowOutsideClick: false,
+            showCancelButton: false,
+            showConfirmButton: false,
             onBeforeOpen: () => {
               Swal.showLoading()
               setTimeout(() => {
@@ -1492,7 +1631,6 @@
                 data: { zipcode: zipcode },
                 success: function(response)
                 {
-                  Swal.close()
                   if(response.status==false){
                      $('#pills-step2').removeClass('active');
                      $('#pills-step1').addClass('active');
@@ -1500,7 +1638,7 @@
                      $("#pincodeerror").html(response.message);
                      return false;
                   } else {
-                     getShipping(response.result);
+                     // getShipping(response.result);
                      console.log("this is tesssss==================>",response);
                      console.log(response.result);
                   }
