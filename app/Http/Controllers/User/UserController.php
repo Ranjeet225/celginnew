@@ -4,11 +4,13 @@ namespace App\Http\Controllers\User;
 
 use App\Models\FavoriteSeller;
 use App\Models\Order;
+use App\Models\User;
 use App\Models\PaymentGateway;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Validator;
+use Auth;
 
 class UserController extends UserBaseController
 {
@@ -156,5 +158,11 @@ class UserController extends UserBaseController
     {
         $user = $this->user;
         return view('user.affilate.refferal-link', compact('user'));
+    }
+
+    public function logs(){
+        $user_id =Auth::user()->id;
+        $refferel_user =User::where('reffered_by',$user_id)->paginate(12);
+        return view('user.logs', compact('refferel_user'));
     }
 }

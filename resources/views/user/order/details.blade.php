@@ -157,10 +157,10 @@
                                     <strong class="text-success">{{ __('Paid') }}</strong>
                                     @endif
                                  </p>
-                                 <p>{{ __('Tax :') }}
+                                 {{-- <p>{{ __('Tax :') }}
                                     {{ \PriceHelper::showOrderCurrencyPrice((($order->tax) /
                                     $order->currency_value),$order->currency_sign) }}
-                                 </p>
+                                 </p> --}}
                                  <p>{{ __('Paid Amount:') }}
                                     {{ \PriceHelper::showOrderCurrencyPrice(($order->pay_amount *
                                     $order->currency_value),$order->currency_sign) }}

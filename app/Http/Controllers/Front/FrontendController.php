@@ -95,7 +95,7 @@ class FrontendController extends FrontBaseController
                     Session::put('refferel_user_id', $refferel_user->id);
                     return redirect()->route('front.index');
                 // }
-            }
+            }   
         }
         if (!empty($request->forgot)) {
             if ($request->forgot == 'success') {

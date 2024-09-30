@@ -1274,6 +1274,9 @@ Route::group(['middleware' => 'maintenance'], function () {
         Route::get('/country/wise/state/{country_id}', 'Front\CheckoutController@getState')->name('country.wise.state');
         Route::get('/state/wise/city', 'Front\CheckoutController@getCity')->name('state.wise.city');
 
+        // User log
+        Route::get('/logs', 'User\UserController@logs')->name('user-logs');
+
         // User Wishlist
         Route::get('/wishlists', 'User\WishlistController@wishlists')->name('user-wishlists');
         Route::get('/wishlist/add/{id}', 'User\WishlistController@addwish')->name('user-wishlist-add');
@@ -1715,7 +1718,7 @@ Route::group(['middleware' => 'maintenance'], function () {
     Route::get('/checkout/payment/molly-notify', 'Payment\Checkout\MollieController@notify')->name('front.molly.notify');
 
     // RazorPay
-    Route::post('/checkout/payment/razorpay-submit', 'Payment\Checkout\RazorpayController@store')->name('front.razorpay.submit');
+    Route::match(['get','post'],'/checkout/payment/razorpay-submit', 'Payment\Checkout\RazorpayController@store')->name('front.razorpay.submit');
     Route::post('/checkout/payment/razorpay-notify', 'Payment\Checkout\RazorpayController@notify')->name('front.razorpay.notify');
 
     // Authorize.Net

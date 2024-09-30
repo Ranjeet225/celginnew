@@ -789,6 +789,7 @@
                            <span id="final-cost">{{ App\Models\Product::convertPrice($totalPrice) }}</span>
                      @endif
                   </div>
+                  @if(!Session::has('refferel_user_id'))
                      @php
                         $coupon_use =App\Models\Order::where('user_id',Auth::user()->id)->whereNotNull('coupon_code')->count();
                         $coupon = App\Models\Coupon::where('status', 1)->select('id', 'code', 'price')->get();
@@ -824,6 +825,7 @@
                         </div>
                         @endif
                      @endif
+                  @endif
                   @endif
                </div>
             </div>

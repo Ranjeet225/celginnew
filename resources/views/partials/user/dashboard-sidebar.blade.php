@@ -21,8 +21,10 @@
             @if($referral_user->count()>5)
               <li class=""><a class="{{ Request::url() == route('user-affilate-program') ? 'active':'' }}" href="{{ route('user-affilate-program') }}">{{ __('Affiliate Program') }}</a></li>
             @endif
-            @if($completed_order->count() >=1)
-            <li class=""><a class="{{ Request::url() == route('user-referral-link') ? 'active':'' }}" href="{{ route('user-referral-link') }}">{{ __('Referral Link') }}</a></li>
+            @if($referral_user->count() < 5)
+              @if($completed_order->count() >=1)
+               <li class=""><a class="{{ Request::url() == route('user-referral-link') ? 'active':'' }}" href="{{ route('user-referral-link') }}">{{ __('Referral Link') }}</a></li>
+              @endif
             @endif
             <li class=""><a class="{{ Request::url() == route('user-wwt-index') ? 'active':'' }}" href="{{route('user-wwt-index')}}">{{ __('Withdraw') }}</a></li>
             <li class=""><a class="{{ Request::url() == route('user-order-track') ? 'active':'' }}" href="{{route('user-order-track')}}">{{ __('Order Tracking') }}</a></li>
@@ -30,6 +32,7 @@
             <li class=""><a class="{{ Request::url() == route('user-messages') ? 'active':'' }}" href="{{route('user-messages')}}">{{ __('Messages') }}</a></li>
             <li class=""><a class="{{ Request::url() == route('user-message-index') ? 'active':'' }}" href="{{route('user-message-index')}}">{{ __('Tickets') }}</a></li>
             <li class=""><a class="{{ Request::url() == route('user-dmessage-index') ? 'active':'' }}" href="{{ route('user-dmessage-index') }}">{{ __('Disputes') }}</a></li>
+            <li class=""><a class="{{ Request::url() == route('user-logs') ? 'active':'' }}" href="{{ route('user-logs') }}">{{ __('User Logs') }}</a></li>
             <li class=""><a class="{{ Request::url() == route('user-profile') ? 'active':'' }}" href="{{ route('user-profile') }}">{{ __('Edit Profile') }}</a></li>
             <li class=""><a class="{{ Request::url() == route('user-reset') ? 'active':'' }}" href="{{ route('user-reset') }}">{{ __('Reset Password') }}</a></li>
             <li class=""><a class="" href="{{ route('user-logout') }}">{{ __('Logout') }}</a></li>

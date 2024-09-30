@@ -156,6 +156,7 @@ class CashOnDeliveryController extends CheckoutBaseControlller
                 $input['affilate_user'] = Session::get('refferel_user_id');
                 $input['affilate_charge'] = $sub;
             }
+            Session::forget('refferel_user_id');
         }
         if (Session::has('affilate')) {
             $val = $request->total / $this->curr->value;
@@ -173,7 +174,8 @@ class CashOnDeliveryController extends CheckoutBaseControlller
                 $input['affilate_user'] = Session::get('affilate');
                 $input['affilate_charge'] = $sub;
             }
-        }
+            Session::forget('affilate');
+        }   
         // dd($input['order_number']);
        
         $order->fill($input)->save();

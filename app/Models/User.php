@@ -8,11 +8,12 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
 
-    protected $fillable = ['name', 'photo', 'zip', 'city_id', 'state_id', 'country','address', 'phone', 'fax', 'email', 'password', 'affilate_code', 'verification_link', 'shop_name', 'owner_name', 'shop_number', 'shop_address', 'reg_number', 'shop_message', 'is_vendor', 'shop_details', 'shop_image', 'shipping_cost', 'date', 'mail_sent', 'email_verified', 'email_token', 'reward','reffered_by','refferel_code', 'referral_income'];
+    protected $fillable = ['name', 'photo', 'zip', 'city_id', 'state_id', 'country','address', 'phone', 'fax', 'email', 'password', 'affilate_code', 'verification_link', 'shop_name', 'owner_name', 'shop_number', 'shop_address', 'reg_number', 'shop_message', 'is_vendor', 'shop_details', 'shop_image', 'shipping_cost', 'date', 'mail_sent', 'email_verified', 'email_token', 'reward','reffered_by','refferel_code','affiliated_by','referral_income'];
 
     protected $hidden = [
         'password', 'remember_token'
     ];
+
 
     public function IsVendor()
     {

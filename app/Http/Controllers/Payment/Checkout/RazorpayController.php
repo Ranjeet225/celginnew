@@ -237,9 +237,6 @@ class RazorpayController extends CheckoutBaseControlller
                 unset($input['shipping']);
                 unset($input['packeging']);
             }
-
-
-
             $order = new Order;
             $input['cart'] = $new_cart;
             $input['user_id'] = Auth::check() ? Auth::user()->id : NULL;
@@ -249,17 +246,36 @@ class RazorpayController extends CheckoutBaseControlller
             $input['wallet_price'] = $input['wallet_price'] / $this->curr->value;
             $input['payment_status'] = "Completed";
             $input['txnid'] = $input_data['razorpay_payment_id'];
-
-            if ($input['tax_type'] == 'state_tax') {
-                $input['tax_location'] = State::findOrFail($input['tax'])->state;
-            } else {
-                $input['tax_location'] = Country::findOrFail($input['tax'])->country_name;
-            }
-            $input['tax'] = Session::get('current_tax');
-
+            
+            // if ($input['tax_type'] == 'state_tax') {
+            //     $input['tax_location'] = State::findOrFail($input['tax'])->state;
+            // } else {
+            //     $input['tax_location'] = Country::findOrFail($input['tax'])->pluck('country_name');
+            // }
+            
+            // $input['tax'] = Session::get('current_tax');
 
             if ($input['dp'] == 1) {
                 $input['status'] = 'completed';
+            }
+
+            if (Session::has('refferel_user_id')) {
+                $val = (int) preg_replace('/\D/', '',$request->total) / $this->curr->value;
+                $val = $val / 100;
+                $sub = $val * $this->gs->affilate_charge;
+                if ($temp_affilate_users != null) {
+                    $t_sub = 0;
+                    foreach ($temp_affilate_users as $t_cost) {
+                        $t_sub += $t_cost['charge'];
+                    }
+                    $sub = $sub - $t_sub;
+                }
+                if ($sub > 0) {
+                    $user = OrderHelper::affilate_check(Session::get('refferel_user_id'), $sub, $input['dp']); // For Affiliate Checking
+                    $input['affilate_user'] = Session::get('refferel_user_id');
+                    $input['affilate_charge'] = $sub;
+                }
+                Session::forget('refferel_user_id');
             }
             if (Session::has('affilate')) {
                 $val = $request->total / $this->curr->value;
@@ -277,6 +293,7 @@ class RazorpayController extends CheckoutBaseControlller
                     $input['affilate_user'] = Session::get('affilate');
                     $input['affilate_charge'] = $sub;
                 }
+                Session::forget('affilate');
             }
 
             $order->fill($input)->save();
@@ -350,6 +367,7 @@ class RazorpayController extends CheckoutBaseControlller
 
             return redirect($success_url);
         }
+
         return redirect($cancel_url);
     }
 }

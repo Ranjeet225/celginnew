@@ -23,6 +23,7 @@ use Datatables;
 use Illuminate\Support\Facades\Auth;
 use Session;
 use GuzzleHttp\Client;
+use Log;
 
 class OrderController extends AdminBaseController
 {
@@ -178,13 +179,15 @@ class OrderController extends AdminBaseController
                         }
                     }
                     foreach ($data->vendororders as $vorder) {
-                        $uprice = User::find($vorder->user_id);
-                        $uprice->current_balance = $uprice->current_balance + $vorder->price;
-                        $vorder->status = 'completed';
-                        $vorder->update();
+                        if ($uprice = User::find($vorder->user_id)) {
+                            $uprice->current_balance = ($uprice->current_balance ?? 0) + ($vorder->price ?? 0);
+                            
+                            $vorder->status = 'completed';
+                            $vorder->update();
 
-                        $uprice->update();
-                        $uprice->update();
+                            $uprice->update();
+                            $uprice->update();
+                        }
                     }
 
                     if ($data->is_shipping == 1) {
@@ -306,9 +309,7 @@ class OrderController extends AdminBaseController
 
                 $data->update($input);
                 if (User::where('id', $data->user_id)->exists()) {
-                    $orderCount = Order::where('user_id', $data->user_id)
-                                        ->where('status', 'completed')
-                                        ->count();
+                    $orderCount = Order::where('user_id', $data->user_id)->where('status', 'completed')->count();
                     if ($orderCount == 1) {
                         $user = User::where('id', $data->user_id)->select('reffered_by')->first();
                         if ($user && $user->reffered_by) {
@@ -316,6 +317,29 @@ class OrderController extends AdminBaseController
                             if ($referrer) {
                                 $referrer->referral_income += 250;
                                 $referrer->save();
+                            }
+                        }
+                    }
+                }
+
+                if (User::where('id', $data->user_id)->exists()) {
+                    $orderCount = Order::where('user_id', $data->user_id)->where('status', 'completed')->count();
+                    if ($orderCount == 1) {
+                        $user = User::where('id', $data->user_id)->select('affiliated_by')->first();
+                        if ($user && $user->affiliated_by) {
+                            $affilated = User::find($user->affiliated_by);
+                            if ($affilated) {
+                                $total = $data->pay_amount;
+                                $affilated->affilate_income += ($total / 100) * 10;
+                                $affilated->save();
+                                $sub_user = User::where('id', $affilated->id)->select('affiliated_by')->first();
+                                if ($sub_user && $sub_user->affiliated_by) {
+                                    $affiliated = User::find($sub_user->affiliated_by);
+                                    if ($affiliated) {
+                                        $affiliated->affilate_income += ($total / 100) * 5;
+                                        $affiliated->save();
+                                    }
+                                }
                             }
                         }
                     }
@@ -336,8 +360,6 @@ class OrderController extends AdminBaseController
                         $data->save();
                     }
                 }
-
-
                 $msg = __('Status Updated Successfully.');
                 return response()->json($msg);
             }
@@ -723,7 +745,7 @@ class OrderController extends AdminBaseController
         $client = new Client();
         $url = 'https://track.delhivery.com/api/p/edit';
         $headers = [
-            'Authorization' => 'Token 298946431eb6b00835b0cf6aaaad8c9a4242c111',  // Replace with your actual token
+            'Authorization' => 'Token 4fe90509d391df11535a3533bc932022b11f9fd4',  // Replace with your actual token
             'Content-Type' => 'application/json',
         ];
         $body = [
@@ -736,14 +758,15 @@ class OrderController extends AdminBaseController
                 'json' => $body,
             ]);
             $statusCode = $response->getStatusCode();
-           
             $content = $response->getBody()->getContents();
+            Log::info($content);
             // Handle the response as needed
             return response()->json([
                 'status_code' => $statusCode,
                 'content' => json_decode($content),
             ]);
         } catch (\Exception $e) {
+            Log::info($e->getMessage());
             // Handle any errors that occur during the request
             return response()->json([
                 'error' => $e->getMessage(),

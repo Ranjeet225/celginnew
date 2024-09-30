@@ -10,6 +10,7 @@ use App\{
 };
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use Log;
 
 class OrderController extends UserBaseController
 {
@@ -130,7 +131,7 @@ class OrderController extends UserBaseController
         $client = new Client();
         $url = 'https://track.delhivery.com/api/p/edit';
         $headers = [
-            'Authorization' => 'Token 298946431eb6b00835b0cf6aaaad8c9a4242c111',  // Replace with your actual token
+            'Authorization' => 'Token 4fe90509d391df11535a3533bc932022b11f9fd4',  // Replace with your actual token
             'Content-Type' => 'application/json',
         ];
         $body = [
@@ -145,6 +146,7 @@ class OrderController extends UserBaseController
             $statusCode = $response->getStatusCode();
            
             $content = $response->getBody()->getContents();
+            Log::info($content);
             // Handle the response as needed
             return response()->json([
                 'status_code' => $statusCode,
@@ -152,6 +154,7 @@ class OrderController extends UserBaseController
             ]);
         } catch (\Exception $e) {
             // Handle any errors that occur during the request
+            Log::info($e->getMessage());
             return response()->json([
                 'error' => $e->getMessage(),
             ], 500);

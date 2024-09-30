@@ -141,10 +141,10 @@
                                                             @endif
 
                                                             @endif
-                                                            <p>{{ __('Tax :') }}
+                                                            {{-- <p>{{ __('Tax :') }}
                                                                 {{ \PriceHelper::showOrderCurrencyPrice((($order->tax) /
                                                                 $order->currency_value),$order->currency_sign) }}
-                                                            </p>
+                                                            </p> --}}
                                                              <p>{{ __('Discount Coupon :') }}
                                                                 {{ \PriceHelper::showOrderCurrencyPrice((( $order->coupon_discount) /
                                                                 $order->currency_value),$order->currency_sign) }}

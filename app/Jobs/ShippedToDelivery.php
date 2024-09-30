@@ -70,7 +70,7 @@ class ShippedToDelivery implements ShouldQueue
                 // dd($total_cod);
                 $client = new Client();
                 $url = 'https://track.delhivery.com/api/cmu/create.json';
-                $token = '298946431eb6b0083b0cf6aaaad8c9a4242c111';
+                $token = '4fe90509d391df11535a3533bc932022b11f9fd4';
                 $data1 = [
                     'shipments' => [
                         [
@@ -108,13 +108,12 @@ class ShippedToDelivery implements ShouldQueue
                     ],
                     
                     'pickup_location' => [
-                        
-                        'name' => "Avira Essentials",
-                        'add' =>"A- 902, Ground floor, Near Shaheed Udham School, Shastri Nagar",
-                        'city' =>"Shastri Nagar",
-                        'pin_code' =>"110052",
+                        'name' => "Celigin Global Pvt Ltd",
+                        'add' =>"A 12/13, 2nd floor, sector 16, Noida, Uttar Pradesh",
+                        'city' =>"Noida",
+                        'pin_code' =>"201301",
                         'country' =>"india",
-                        'phone' =>"8287730732",
+                        'phone' =>"9667054665",
                         ]
                 ];
 

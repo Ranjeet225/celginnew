@@ -59,11 +59,13 @@ class RegisterController extends Controller
 				$refferel_user_id = Session::get('refferel_user_id');
 				$input['reffered_by'] = User::where('id', $refferel_user_id)->value('id');
 			}
+			if(Session::has('affilate')) {
+				$affilate_user = Session::get('affilate');
+				$input['affiliated_by'] =  User::where('id', $affilate_user)->value('id');
+			}
 			$input['refferel_code'] = md5($request->name.$request->email.rand(1111,9999));
-
 				if(!empty($request->vendor))
 				{
-					//--- Validation Section
 					$rules = [
 						'shop_name' => 'unique:users',
 						'shop_number'  => 'max:10'
