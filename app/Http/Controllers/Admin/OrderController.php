@@ -218,9 +218,6 @@ class OrderController extends AdminBaseController
                         }
                     }
 
-
-
-
                     if (User::where('id', $data->affilate_user)->exists()) {
                         $user_referred_by = User::where('id', $data->affilate_user)->pluck('reffered_by');
                         if(count($user_referred_by) > 0){

@@ -33,15 +33,10 @@ class PaymentGetways implements ShouldQueue
     public function handle(): void
     {
         $order = Order::where('status', 'pending')->where('order_number', $this->input)->get();
-
-        // dd( $order);
         foreach ($order as $key => $value) {
-         
             $value1 = Order::where('id', $value->id)->first();
             $data=$value1->cart;
             $array = json_decode($data, true);
-
-        //   dd( $array);
             foreach($array['items'] as $val){
 
               $data_array= $val['item'];
@@ -134,8 +129,7 @@ class PaymentGetways implements ShouldQueue
                     Log::info('onedelhivery order generate for awb ' . $responseBody);
                     $returnData =  json_decode($responseBody);
                     Log::info('create response================> ' .json_encode($data1));
-                    Log::info('onedelhivery order generate for order id ' . $value1['order_number']);
-                    DB::table('orders')->where('order_number', $value1['order_number'])
+                     DB::table('orders')->where('order_number', $value1['order_number'])
                         ->update([
                             'status' => "on delivery",
                             'third_party_delivery_tracking_id' => $returnData->packages[0]->waybill

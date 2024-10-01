@@ -35,14 +35,10 @@ class ShippedToDelivery implements ShouldQueue
     public function handle(): void
     {
         $order = Order::where('status', 'pending')->where('order_number', $this->input)->get();
-
-     //   dd( $order);
         foreach ($order as $key => $value) {
-         
             $value1 = Order::where('id', $value->id)->first();
             $data=$value1->cart;
             $array = json_decode($data, true);
-
         
             foreach($array['items'] as $val){
 
@@ -137,7 +133,7 @@ class ShippedToDelivery implements ShouldQueue
                     Log::info('onedelhivery order generate for order id ' . $value1['order_number']);
                     DB::table('orders')->where('order_number', $value1['order_number'])
                         ->update([
-                            'status' => "panding",
+                            'status' => "pending",
                             'third_party_delivery_tracking_id' => $returnData->packages[0]->waybill
                     ]);
                     Log::info('onedelhivery order generate for awb ' . $responseBody);
@@ -145,8 +141,6 @@ class ShippedToDelivery implements ShouldQueue
                 } catch (\Exception $e) {
                     Log::info('onedelhivery order generate for order id ' . $e);
                 }
-           
-      
             }
         }
         \Log::info('Processing job with data vinay');

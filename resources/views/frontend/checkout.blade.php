@@ -242,6 +242,17 @@
                                     <input type="hidden" name="total" id="grandtotal" value="{{round($totalPrice * $curr->value,2)}}">
                                     <input type="hidden" class="tgrandtotal" value="{{round($totalPrice * $curr->value,2)}}">
                                     @endif
+                                    @php
+                                       $orderCount = App\Models\Order::where('user_id', Auth::user()->id)->count();
+                                    @endphp
+                                    @if($orderCount == 0)
+                                       @php
+                                          $user = App\Models\User::where('id', Auth::user()->id)->select('reffered_by')->first();
+                                       @endphp
+                                       @if($user && $user->reffered_by)
+                                       <input type="hidden" id="refferal_discount" name="refferal_discount" value="{{$refferal_discount}}">
+                                       @endif
+                                    @endif
                                     <div class="col-lg-6 d-none my-2">
                                        <select class="form-control " id="show_city" name="customer_city" required>
 
@@ -650,13 +661,7 @@
                         </P>
                      </li>
                      @endif --}}
-                     @php
-                        $orderCount = App\Models\Order::where('user_id', Auth::user()->id)->count();
-                     @endphp
                      @if($orderCount == 0)
-                        @php
-                           $user = App\Models\User::where('id', Auth::user()->id)->select('reffered_by')->first();
-                        @endphp
                         @if($user && $user->reffered_by)
                         <li>
                            <p>

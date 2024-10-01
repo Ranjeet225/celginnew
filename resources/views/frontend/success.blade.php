@@ -141,10 +141,9 @@
                                                             @endif
 
                                                             @endif
-                                                            {{-- <p>{{ __('Tax :') }}
-                                                                {{ \PriceHelper::showOrderCurrencyPrice((($order->tax) /
-                                                                $order->currency_value),$order->currency_sign) }}
-                                                            </p> --}}
+                                                            <p>{{ __('Referral Discount :') }}
+                                                                {{ \PriceHelper::showOrderCurrencyPrice($order->refferal_discount,$order->currency_sign)}}
+                                                            </p>
                                                              <p>{{ __('Discount Coupon :') }}
                                                                 {{ \PriceHelper::showOrderCurrencyPrice((( $order->coupon_discount) /
                                                                 $order->currency_value),$order->currency_sign) }}
@@ -190,8 +189,8 @@
                                                         <h4 class="text-center">{{ __('Ordered Products:') }}</h4>
                                                         <thead>
                                                             <tr>
-                                                                <th width="35%">{{ __('Name') }}</th>
-                                                                <th width="20%">{{ __('Details') }}</th>
+                                                                <th width="35%">{{ __(' Item Name') }}</th>
+                                                                <th width="20%">{{ __('Quantity') }}</th>
                                                                 <th>{{ __('Price') }}</th>
                                                                 <th>{{ __('Total') }}</th>
                                                             </tr>

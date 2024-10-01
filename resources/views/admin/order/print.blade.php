@@ -32,9 +32,6 @@
     width: 210mm;
     height: 287mm;
   }
-
-html {
-
 }
 ::-webkit-scrollbar {
     width: 0px;  /* remove scrollbar space */
@@ -198,25 +195,25 @@ html {
                                         @endif
 
                                         @if($order->packing_cost != 0)
-                                        @php 
-                                        $pprice = round(($order->packing_cost / $order->currency_value),2);
-                                        @endphp
-                                        @if(DB::table('packages')->where('price','=',$pprice)->count() > 0)
-                                        <tr class="no-border">
-                                            <td colspan="1"></td>
-                                            <td><strong>{{ DB::table('packages')->where('price','=',$pprice)->first()->title }}({{$order->currency_sign}})</strong></td>
-                                            <td>{{ \PriceHelper::showOrderCurrencyPrice($order->packing_cost,$order->currency_sign) }}</td>
-                                        </tr>
-                                        @endif
+                                            @php 
+                                            $pprice = round(($order->packing_cost / $order->currency_value),2);
+                                            @endphp
+                                            @if(DB::table('packages')->where('price','=',$pprice)->count() > 0)
+                                            <tr class="no-border">
+                                                <td colspan="1"></td>
+                                                <td><strong>{{ DB::table('packages')->where('price','=',$pprice)->first()->title }}({{$order->currency_sign}})</strong></td>
+                                                <td>{{ \PriceHelper::showOrderCurrencyPrice($order->packing_cost,$order->currency_sign) }}</td>
+                                            </tr>
+                                            @endif
                                         @endif
 
-                                        @if($order->tax != 0)
+                                        {{-- @if($order->tax != 0)
                                         <tr class="no-border">
                                             <td colspan="1"></td>
                                             <td>{{ __('Tax') }} </td>
                                             <td>{{ \PriceHelper::showOrderCurrencyPrice((($order->tax) / $order->currency_value),$order->currency_sign) }}</td>
                                         </tr>
-                                        @endif
+                                        @endif --}}
                                         @if($order->coupon_discount != null)
                                         <tr class="no-border">
                                             <td colspan="1"></td>
@@ -251,6 +248,17 @@ html {
                                            
                                             </td>
                                         </tr>
+                                        @if(!empty($order->refferal_discount))
+                                        <tr class="semi-border">
+                                            <td colspan="1"></td>
+                                            <td><strong>{{ __('Referral Discount') }}</strong></td>
+                                            <td>- {{
+                                            \PriceHelper::showOrderCurrencyPrice($order->refferal_discount,$order->currency_sign)
+                                            }}
+                                           
+                                            </td>
+                                        </tr>
+                                        @endif
                                         <tr class="final-border">
                                             <td colspan="1"></td>
                                             <td><strong>{{ __('Total') }}</strong></td>

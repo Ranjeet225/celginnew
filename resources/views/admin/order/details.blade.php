@@ -76,14 +76,23 @@
                                 </tr>
                                 @endif
 
-                                @if($order->tax != 0)
+                                @if($order->refferal_discount != 0)
+                                <tr>
+                                    <th width="45%">{{ __('Referral Discount') }}</th>
+                                    <td width="10%">:</td>
+                                    <td width="45%">{{
+                                        \PriceHelper::showOrderCurrencyPrice($order->refferal_discount,$order->currency_sign)
+                                        }}</td>
+                                </tr>
+                                @endif
+                                {{-- @if($order->tax != 0)
                                 <tr>
                                     <th width="45%">{{ __('Tax :') }}</th>
                                     <td width="10%">:</td>
                                     <td width="45%"> {{ \PriceHelper::showOrderCurrencyPrice((($order->tax) /
                                         $order->currency_value),$order->currency_sign) }}</td>
                                 </tr>
-                                @endif
+                                @endif --}}
 
                                 @if($order->packing_title != null && $order->is_shipping == 0)
                                 <tr>
@@ -256,7 +265,7 @@
                                 @endif
                                 @if($order->affilate_user != null)
                                 <tr>
-                                    <th width="45%">{{ __('Affilate User') }}</th>
+                                    <th width="45%">{{ __('Referral User') }}</th>
                                     <th width="10%">:</th>
                                     <td width="45%">
                                         @if( App\Models\User::where('id', $order->affilate_user)->exists() )
@@ -267,7 +276,7 @@
                                     </td>
                                 </tr>
                                 @endif
-                                @if($order->affilate_charge != null)
+                                {{-- @if($order->affilate_charge != null)
                                 <tr>
                                     <th width="45%">{{ __('Affilate Charge') }}</th>
                                     <th width="10%">:</th>
@@ -277,7 +286,7 @@
                                     </td>
 
                                 </tr>
-                                @endif
+                                @endif --}}
                             </tbody>
                         </table>
                     </div>

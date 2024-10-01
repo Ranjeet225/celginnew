@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-	protected $fillable = ['user_id', 'cart', 'method','shipping', 'pickup_location', 'totalQty', 'pay_amount', 'txnid', 'charge_id', 'order_number', 'payment_status', 'customer_name', 'customer_email', 'customer_phone', 'customer_address', 'customer_city', 'customer_zip','customer_state', 'customer_country','shipping_name', 'shipping_email', 'shipping_phone', 'shipping_address', 'shipping_city', 'shipping_zip','shipping_state','shipping_country', 'order_note','coupon_code','coupon_discount','status','affilate_user','affilate_charge','currency_sign','currency_name','currency_value','shipping_cost','packing_cost','tax','tax_location','dp','pay_id','vendor_shipping_id','vendor_packing_id','wallet_price','shipping_title','packing_title','affilate_users','commission','is_shipping','vendor_ids'];
+	protected $fillable = ['user_id', 'cart', 'method','shipping', 'pickup_location', 'totalQty', 'pay_amount', 'txnid', 'charge_id', 'order_number', 'payment_status', 'customer_name', 'customer_email', 'customer_phone', 'customer_address', 'customer_city', 'customer_zip','customer_state', 'customer_country','shipping_name', 'shipping_email', 'shipping_phone', 'shipping_address', 'shipping_city', 'shipping_zip','shipping_state','shipping_country', 'order_note','coupon_code','coupon_discount','status','affilate_user','affilate_charge','currency_sign','currency_name','currency_value','shipping_cost','packing_cost','tax','tax_location','dp','pay_id','vendor_shipping_id','vendor_packing_id','wallet_price','shipping_title','packing_title','affilate_users','commission','is_shipping','vendor_ids','third_party_delivery_tracking_id','refferal_discount'];
 
     public function vendororders()
     {

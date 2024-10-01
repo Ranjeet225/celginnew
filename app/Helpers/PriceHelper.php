@@ -133,19 +133,18 @@ class PriceHelper
             $gs = cache()->remember('generalsettings', now()->addDay(), function () {
                 return DB::table('generalsettings')->first();
             });
-
+         
             $totalAmount = $cart->totalPrice;
             $tax_amount = 0;
-            if ($input['tax'] && @$input['tax_type']) {
-                if (@$input['tax_type'] == 'state_tax') {
-                    $tax = State::findOrFail($input['tax'])->tax;
-                } else {
-                    $tax = Country::findOrFail($input['tax'])->tax;
-                }
-                $tax_amount = ($totalAmount / 100) * $tax;
-                $totalAmount = $totalAmount + $tax_amount;
-            }
-
+            // if ($input['tax'] && @$input['tax_type']) {
+            //     if (@$input['tax_type'] == 'state_tax') {
+            //         $tax = State::findOrFail($input['tax'])->tax;
+            //     } else {
+            //         $tax = Country::findOrFail($input['tax'])->tax;
+            //     }
+            //     $tax_amount = ($totalAmount / 100) * $tax;
+            //     $totalAmount = $totalAmount + $tax_amount;
+            // }
             if ($gs->multiple_shipping == 0) {
                 
                 $vendor_shipping_ids = [];
@@ -153,18 +152,21 @@ class PriceHelper
                 foreach ($vendor_ids as $vendor_id) {
                     $vendor_shipping_ids[$vendor_id] = $input['shipping_id'] != 0 ? $input['shipping_id'] : null;
                     $vendor_packing_ids[$vendor_id] = $input['packaging_id'] != 0 ? $input['packaging_id'] : null;
+                    $vendor_packing_ids[$vendor_id] = $input['refferal_discount'] != 0 ? $input['refferal_discount'] : null;
                 }
 
                 $shipping = $input['shipping_id'] != 0 ? Shipping::findOrFail($input['shipping_id']) : null;
                 $packeing = $input['packaging_id'] != 0 ? Package::findOrFail($input['packaging_id']) : null;
+                $referral_discount = $input['refferal_discount'] != 0 ? $input['refferal_discount'] : null;
 
                 // $totalAmount = $totalAmount + @$shipping->price + @$packeing->price;
-                $totalAmount = $totalAmount +  $input['shipping_cost'] + @$packeing->price - $input['coupon_discount'];
+                $totalAmount = $totalAmount - $referral_discount +  $input['shipping_cost'] + @$packeing->price - $input['coupon_discount'];
                 // dd($totalAmount);
                 return [
                     'total_amount' => $totalAmount,
                     'shipping' => $shipping,
                     'packeing' => $packeing,
+                    'referral_discount' => $referral_discount,
                     'is_shipping' => 0,
                     'vendor_shipping_ids' => @json_encode($vendor_shipping_ids),
                     'vendor_packing_ids' => @json_encode($vendor_packing_ids),
@@ -215,15 +217,16 @@ class PriceHelper
                 }
 
 
-
+                $referral_discount = $input['refferal_discount'] != 0 ? $input['refferal_discount'] : null;
                 // $totalAmount = $totalAmount + $shipping_cost + $packaging_cost;
-                $totalAmount = $totalAmount + $input['shipping_cost'] + $packaging_cost - $input['coupon_discount'];
+                $totalAmount = $totalAmount - $referral_discount + $input['shipping_cost'] + $packaging_cost - $input['coupon_discount'];
 
 
                 return [
                     'total_amount' => $totalAmount,
                     'shipping' => isset($shipping) ? $shipping : null,
                     'packeing' => isset($packeing) ? $packeing : null,
+                    'referral_discount' => $referral_discount,
                     'is_shipping' => 1,
                     'tax' => $tax_amount,
                     'vendor_shipping_ids' => @json_encode($input['shipping']),
@@ -270,15 +273,15 @@ class PriceHelper
                 return DB::table('generalsettings')->first();
             });
             $totalAmount = $cart->totalPrice;
-            if ($input['tax'] && @$input['tax_type']) {
-                if (@$input['tax_type'] == 'state_tax') {
-                    $tax = State::findOrFail($input['tax'])->tax;
-                } else {
-                    $tax = Country::findOrFail($input['tax'])->tax;
-                }
-                $tax_amount = ($totalAmount / 100) * $tax;
-                $totalAmount = $totalAmount + $tax_amount;
-            }
+            // if ($input['tax'] && @$input['tax_type']) {
+            //     if (@$input['tax_type'] == 'state_tax') {
+            //         $tax = State::findOrFail($input['tax'])->tax;
+            //     } else {
+            //         $tax = Country::findOrFail($input['tax'])->tax;
+            //     }
+            //     $tax_amount = ($totalAmount / 100) * $tax;
+            //     $totalAmount = $totalAmount + $tax_amount;
+            // }
 
             if ($gs->multiple_shipping == 0) {
                 $vendor_shipping_ids = [];
@@ -335,3 +338,4 @@ class PriceHelper
         }
     }
 }
+    

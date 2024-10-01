@@ -56,7 +56,6 @@ class CashOnDeliveryController extends CheckoutBaseControlller
 
 
         $orderCalculate = PriceHelper::getOrderTotal($input, $cart);
-// dd($orderCalculate);
         if (isset($orderCalculate['success']) && $orderCalculate['success'] == false) {
             return redirect()->back()->with('unsuccess', $orderCalculate['message']);
         }
@@ -127,6 +126,7 @@ class CashOnDeliveryController extends CheckoutBaseControlller
         $input['pay_amount'] = $orderTotal ;
         $input['order_number'] = Str::random(4) . time();
         $input['wallet_price'] = $request->wallet_price / $this->curr->value;
+        $input['refferal_discount']=$request->refferal_discount;
         $tax = 0;
         foreach($cart->items as $data){
             $tax += isset($data['price']) && isset($data['item']['product_tax']) ? $data['price'] * $data['item']['product_tax'] / 100 : 0;
@@ -158,6 +158,7 @@ class CashOnDeliveryController extends CheckoutBaseControlller
             }
             Session::forget('refferel_user_id');
         }
+        
         if (Session::has('affilate')) {
             $val = $request->total / $this->curr->value;
             $val = $val / 100;
