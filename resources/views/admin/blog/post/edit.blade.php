@@ -58,7 +58,16 @@
                             <input type="text" class="input-field" name="title" placeholder="Title" value="{{$data->title}}" required="">
                           </div>
                         </div>
-
+                        <div class="row">
+                          <div class="col-lg-4">
+                            <div class="left-area">
+                                <h4 class="heading">{{ __('Date') }} *</h4>
+                            </div>
+                          </div>
+                          <div class="col-lg-7">
+                            <input type="date" class="input-field" name="date" placeholder="{{ __('Date') }}" required="" value="{{$data->date}}">
+                          </div>
+                        </div>
                         <div class="row">
                           <div class="col-lg-4">
                             <div class="left-area">

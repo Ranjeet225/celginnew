@@ -141,9 +141,11 @@
                                                             @endif
 
                                                             @endif
+                                                            @if($order->refferal_discount)
                                                             <p>{{ __('Referral Discount :') }}
                                                                 {{ \PriceHelper::showOrderCurrencyPrice($order->refferal_discount,$order->currency_sign)}}
                                                             </p>
+                                                            @endif
                                                              <p>{{ __('Discount Coupon :') }}
                                                                 {{ \PriceHelper::showOrderCurrencyPrice((( $order->coupon_discount) /
                                                                 $order->currency_value),$order->currency_sign) }}

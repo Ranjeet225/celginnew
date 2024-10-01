@@ -29,7 +29,6 @@ class PaypalController extends CheckoutBaseControlller
 
     public function store(Request $request)
     {
-        // dd($request->all(),1);
         $order_number = $request->order_number;
         $order = Order::where('order_number', $order_number)->firstOrFail();
         $curr = Currency::where('sign', '=', $order->currency_sign)->firstOrFail();

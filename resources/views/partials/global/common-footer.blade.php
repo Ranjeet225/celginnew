@@ -131,7 +131,7 @@ $pages = App\Models\Page::get();
                                         </h4>
                                     </a>
                                     <p class="date">
-                                        {{ date('M d - Y',(strtotime($footer_blog->created_at))) }}
+                                        {{ date('M d - Y',(strtotime($footer_blog->date))) }}
                                     </p>
                                 </div>
                             </div>

@@ -52,7 +52,7 @@
                      <li>
                         <a href="{{ route('front.blogshow',$reblog->slug) }}">{{ mb_strlen($reblog->title,'UTF-8') > 45
                            ? mb_substr($reblog->title,0,45,'UTF-8')."..":$reblog->title }}</a>
-                        <span class="post-date">{{ date('M d - Y',(strtotime($reblog->created_at))) }}</span>
+                        <span class="post-date">{{ date('M d - Y',(strtotime($reblog->date))) }}</span>
                      </li>
                      @endforeach
                   </ul>
@@ -84,7 +84,7 @@
                      <a href="#"><i class="flaticon-user-silhouette flat-mini"></i> <span>{{ __('By Admin')
                            }}</span></a>
                      <a href="#"><i class="flaticon-calendar flat-mini"></i> <span>{{ date('M d -
-                           Y',(strtotime($blog->created_at))) }}</span></a>
+                           Y',(strtotime($blog->date))) }}</span></a>
                      <a href="#"><i class="flaticon-like flat-mini"></i> <span>{{ $blog->views }} {{ __('View(s)')
                            }}</span></a>
                      <span><i class="flaticon-document flat-mini text-primary"></i> <a href="#"><span>{{ __('Source') }}

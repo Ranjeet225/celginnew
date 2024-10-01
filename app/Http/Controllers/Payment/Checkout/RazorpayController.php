@@ -246,7 +246,9 @@ class RazorpayController extends CheckoutBaseControlller
             $input['wallet_price'] = $input['wallet_price'] / $this->curr->value;
             $input['payment_status'] = "Completed";
             $input['txnid'] = $input_data['razorpay_payment_id'];
-            $input['refferal_discount']=$request->refferal_discount;
+            if($request->refferal_discount){
+                $input['refferal_discount']=$request->refferal_discount;
+            }
             
             // if ($input['tax_type'] == 'state_tax') {
             //     $input['tax_location'] = State::findOrFail($input['tax'])->state;

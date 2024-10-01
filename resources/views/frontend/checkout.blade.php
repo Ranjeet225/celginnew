@@ -250,7 +250,7 @@
                                           $user = App\Models\User::where('id', Auth::user()->id)->select('reffered_by')->first();
                                        @endphp
                                        @if($user && $user->reffered_by)
-                                       <input type="hidden" id="refferal_discount" name="refferal_discount" value="{{$refferal_discount}}">
+                                       <input type="hidden" id="refferal_discount" name="refferal_discount" value="{{$refferal_discount ?? '0'}}">
                                        @endif
                                     @endif
                                     <div class="col-lg-6 d-none my-2">
@@ -667,7 +667,7 @@
                            <p>
                               {{ __('Refferel Discount') }}
                            </p>
-                           <p class="float-end">- {{App\Models\Product::convertPrice($refferal_discount)}}</p>
+                           <p class="float-end">- {{App\Models\Product::convertPrice($refferal_discount ?? 0)}}</p>
                         </li>
                      @endif
                     @endif

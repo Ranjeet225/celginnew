@@ -152,12 +152,12 @@ class PriceHelper
                 foreach ($vendor_ids as $vendor_id) {
                     $vendor_shipping_ids[$vendor_id] = $input['shipping_id'] != 0 ? $input['shipping_id'] : null;
                     $vendor_packing_ids[$vendor_id] = $input['packaging_id'] != 0 ? $input['packaging_id'] : null;
-                    $vendor_packing_ids[$vendor_id] = $input['refferal_discount'] != 0 ? $input['refferal_discount'] : null;
+                    $vendor_packing_ids[$vendor_id] = array_key_exists('refferal_discount', $input) && $input['refferal_discount'] != 0 ? $input['refferal_discount'] : null;
                 }
 
                 $shipping = $input['shipping_id'] != 0 ? Shipping::findOrFail($input['shipping_id']) : null;
                 $packeing = $input['packaging_id'] != 0 ? Package::findOrFail($input['packaging_id']) : null;
-                $referral_discount = $input['refferal_discount'] != 0 ? $input['refferal_discount'] : null;
+                $referral_discount = array_key_exists('refferal_discount', $input) && $input['refferal_discount'] != 0 ? $input['refferal_discount'] : null;
 
                 // $totalAmount = $totalAmount + @$shipping->price + @$packeing->price;
                 $totalAmount = $totalAmount - $referral_discount +  $input['shipping_cost'] + @$packeing->price - $input['coupon_discount'];

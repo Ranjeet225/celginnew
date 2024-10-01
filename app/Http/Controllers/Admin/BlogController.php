@@ -82,6 +82,9 @@ class BlogController extends AdminBaseController
         if (!empty($request->tags)) {
             $input['tags'] = implode(',', $request->tags);
         }
+        if (!empty($request->date)) {
+            $input['date'] = $request->date;
+        }
         if ($request->secheck == "") {
             $input['meta_tag'] = null;
             $input['meta_description'] = null;
@@ -143,6 +146,9 @@ class BlogController extends AdminBaseController
             $input['tags'] = implode(',', $request->tags);
         } else {
             $input['tags'] = null;
+        }
+        if (!empty($request->date)) {
+            $input['date'] = $request->date;
         }
         if ($request->secheck == "") {
             $input['meta_tag'] = null;
