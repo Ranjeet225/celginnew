@@ -165,4 +165,32 @@ class UserController extends UserBaseController
         $refferel_user =User::where('reffered_by',$user_id)->paginate(12);
         return view('user.logs', compact('refferel_user'));
     }
+
+    public function addtowallet(Request $request)
+    {
+        $user = \App\Models\User::findOrFail($request->user_id);
+        $user->balance = $user->balance + ($request->balance);
+        
+        if ($user->affilate_income >= $request->balance) {
+            $user->affilate_income -= $request->balance;
+        } else {
+            $remaining_amount = $request->balance - $user->affilate_income;
+            $user->affilate_income = 0;
+            $user->referral_income -= $remaining_amount;
+        }
+        $user->affilate_income;
+        $user->referral_income;
+        
+        $user->save();
+        $deposit = new \App\Models\Deposit();
+        $deposit->user_id = $request->user_id;
+        $deposit->amount = $request->amount;
+        $deposit->currency_code = 'INR';
+        $deposit->currency_value= 1;
+        $deposit->method = $request->method;
+        $deposit->txnid = 'WALLET-ADD';
+        $deposit->status = 1;
+        $deposit->save();
+        return redirect()->back()->with('success', __('Added To Wallet'));
+    }
 }

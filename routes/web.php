@@ -1230,6 +1230,7 @@ Route::group(['middleware' => 'maintenance'], function () {
         // USER AUTH SECION
         Route::get('/login', 'User\LoginController@showLoginForm')->name('user.login');
         Route::get('/vendor-login', 'User\LoginController@showVendorLoginForm')->name('vendor.login');
+        
 
         Route::get('/register', 'User\RegisterController@showRegisterForm')->name('user.register');
         Route::get('/vendor-register', 'User\RegisterController@showVendorRegisterForm')->name('vendor.register');
@@ -1263,6 +1264,7 @@ Route::group(['middleware' => 'maintenance'], function () {
         Route::get('/reset', 'User\UserController@resetform')->name('user-reset');
         Route::post('/reset', 'User\UserController@reset')->name('user-reset-submit');
         // User Reset End
+        Route::post('/user-add-wallet', 'User\UserController@addtowallet')->name('user-add-wallet');
 
         // User Profile
         Route::get('/profile', 'User\UserController@profile')->name('user-profile');

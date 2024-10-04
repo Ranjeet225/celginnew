@@ -56,7 +56,7 @@ class RazorpayController extends DepositBaseController
 
 
         $orderData = [
-            'receipt'         => $item_number,
+            'receipt'         => Str::random(4) . time() . '-'.$item_number, //  $item_number,
             'amount'          => $item_amount * 100, // 2000 rupees in paise
             'currency'        => 'INR',
             'payment_capture' => 1 // auto capture

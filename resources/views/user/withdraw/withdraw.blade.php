@@ -53,18 +53,29 @@
                         @endphp
                         <div class="form-group mb-4">
                            <label class="control-label col-sm-4" for="name">{{ __('Current Balance') }} {{'₹'.$balance }}</label>
+                           <button type="button" class="btn-primary btn-sm add-balance-btn float-end" data-bs-toggle="modal" data-bs-target="#addWalletModal"><i class="fas fa-plus"></i> {{ __('Add to Wallet') }}</button>
                         </div>
+
+                     
                         <div class="form-group">
                            <label class="control-label col-sm-4" for="name">{{ __('Withdraw Method') }} *
                            </label>
                            <div class="col-sm-12 mt-2">
                               <select class="form-control border " name="methods" id="withmethod" required>
                                  <option value="">{{ __('Select Withdraw Method') }}</option>
-                                 <option value="Paypal">{{ __('Paypal') }}</option>
-                                 <option value="Skrill">{{ __('Skrill') }}</option>
-                                 <option value="Payoneer">{{ __('Payoneer') }}</option>
                                  <option value="Bank">{{ __('Bank') }}</option>
+                                 <option value="upi">{{ __('UPI ID') }}</option>
                               </select>
+                           </div>
+                        </div>
+                        <div class="form-group mt-4 mb-4" id="upi_id" style="display: none;">
+                           <div class="form-group">
+                              <label class="control-label col-sm-12" for="name">{{ __('Enter UPI ID') }} *
+                              </label>
+                              <div class="col-sm-12">
+                                 <input name="upi_id" placeholder="{{ __('874309543@payment') }}"
+                                    class="form-control border" value="" type="text">
+                              </div>
                            </div>
                         </div>
                         <div class="form-group mt-4 mb-4" >
@@ -149,6 +160,29 @@
       </div>
    </div>
 </div>
+   <!-- Add Wallet Modal -->
+   <div class="modal fade" id="addWalletModal" tabindex="-1" aria-labelledby="addWalletModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="addWalletModalLabel">{{ __('Confirm') }}</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <p>{{ __('Are you sure you want to add your current balance to your wallet?') }}</p>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                  <form action="{{url('user/user-add-wallet')}}" method="POST">
+                      @csrf
+                      <input type="hidden" name="balance" value="{{ $balance }}">
+                      <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
+                      <button type="submit" class="btn btn-primary">{{ __('Add to Wallet') }}</button>
+                  </form>
+              </div>
+          </div>
+      </div>
+  </div>
 <!--==================== Blog Section End ====================-->
 @includeIf('partials.global.common-footer')
 @endsection
@@ -166,9 +200,14 @@
 
                $("#paypal").hide();
                $("#paypal").find('input').attr('required', false);
+               $('#upi_id').hide();
 
            }
-           if (method != "Bank") {
+           if(method == "upi"){
+               $("#bank").hide();
+               $('#upi_id').show();
+           }
+           if (method != "Bank" ) {
                $("#bank").hide();
                $("#bank").find('input, select').attr('required', false);
 
@@ -178,6 +217,7 @@
            if (method == "") {
                $("#bank").hide();
                $("#paypal").hide();
+               $('#upi_id').hide();
            }
 
        })

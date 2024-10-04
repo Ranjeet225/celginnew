@@ -146,7 +146,7 @@ class PaymentGateway extends Model
     public function showForm(){
         $show = '';
         $data = $this->keyword == null ? 'other' : $this->keyword;
-        $values = ['cod','voguepay','sslcommerz','flutterwave','razorpay','mollie','paytm','paystack','paypal','instamojo','stripe'];
+        $values = ['cod','voguepay','sslcommerz','flutterwave','razorpay','mollie','paytm','paystack','paypal','stripe'];
         if (in_array($data, $values)){
             $show = 'no';
         }else{

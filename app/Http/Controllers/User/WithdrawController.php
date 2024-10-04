@@ -30,7 +30,6 @@ class WithdrawController extends UserBaseController
 
     public function store(Request $request)
     {
-
         $from = User::findOrFail($this->user->id);
 
         $withdrawcharge = $this->gs;
@@ -57,6 +56,7 @@ class WithdrawController extends UserBaseController
                 $newwithdraw['user_id'] = $this->user->id;
                 $newwithdraw['method'] = $request->methods;
                 $newwithdraw['acc_email'] = $request->acc_email;
+                $newwithdraw['upi_id'] = $request->upi_id ?? null;
                 $newwithdraw['iban'] = $request->iban;
                 $newwithdraw['country'] = $request->acc_country;
                 $newwithdraw['acc_name'] = $request->acc_name;

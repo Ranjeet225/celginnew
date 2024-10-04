@@ -49,10 +49,16 @@
                                                 <td>{{$withdraw->method}}</td>
                                             </tr>
                                             @if($withdraw->method != "Bank")
-                                            <tr>
-                                                <th>{{$withdraw->method}} {{ __("Email") }}:</th>
-                                                <td>{{$withdraw->acc_email}}</td>
-                                            </tr>
+                                                <tr>
+                                                    <th>{{ __("Email") }} :</th>
+                                                    <td>{{$withdraw->acc_email}}</td>
+                                                </tr>
+                                                @if($withdraw->upi_id)
+                                                <tr>
+                                                    <th>{{ __("Upi Id") }}:</th>
+                                                    <td>{{$withdraw->upi_id}}</td>
+                                                </tr>
+                                                @endif
                                             @else 
                                             <tr>
                                                 <th>{{$withdraw->method}} {{ __("Account") }}:</th>

@@ -20,4 +20,11 @@ class TestimonialCategory extends Model
     {
     	$this->attributes['slug'] = str_replace(' ', '-', $value);
     }
+
+  
+    
+    public function blogs()
+    {
+        return $this->hasMany('App\Models\Testimonial','category_id');
+    }
 }
