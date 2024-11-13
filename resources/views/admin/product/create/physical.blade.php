@@ -544,6 +544,18 @@
 													<input name="product_tax"  type="number" class="input-field" placeholder="18%" value="" min="0">
 												</div>
 											</div>
+											<div class="row">
+												<div class="col-lg-12">
+													<div class="left-area">
+														<h4 class="heading">
+															{{ __('Product Expiry Date') }}
+														</h4>
+													</div>
+												</div>
+												<div class="col-lg-12">
+													<input name="expiry_date"  type="date" class="input-field" placeholder="18%" value="" min="0">
+												</div>
+											</div>
 
 
 											<div class="">

@@ -210,7 +210,6 @@ class ProductController extends AdminBaseController
     //*** POST Request
     public function store(Request $request)
     {
-        // dd($request->all());
         //--- Validation Section
         $rules = [
             'photo' => 'required',
@@ -273,6 +272,11 @@ class ProductController extends AdminBaseController
                 $input['product_tax'] = null;
             }else{
                 $input['product_tax'] = $request->product_tax;
+            }
+            if ($request->product_expiry == "") {
+                $input['product_expiry'] = null;
+            }else{
+                $input['product_expiry'] = $request->product_expiry;
             }
             if (empty($request->stock_check)) {
                 $input['stock_check'] = 0;
@@ -743,12 +747,15 @@ class ProductController extends AdminBaseController
             if ($request->minimum_qty_check == "") {
                 $input['minimum_qty'] = null;
             }
-
             // Check Shipping Time
             if ($request->shipping_time_check == "") {
                 $input['ship'] = null;
             }
-
+            if ($request->product_expiry == "") {
+                $input['product_expiry'] = null;
+            }else{
+                $input['product_expiry'] = $request->product_expiry;
+            }
             // Check Size
             if (empty($request->stock_check)) {
                 $input['stock_check'] = 0;
